@@ -1,15 +1,16 @@
 {
-  "name": "battery-checker",
+  "name": "battery_checker",
   "version": "0.1.0",
   "homepage": "./",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.3.2",
-    "@testing-library/user-event": "^7.1.2",
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0",
-    "react-scripts": "3.3.0"
+    "cordova-android": "^8.1.0",
+    "cordova-plugin-whitelist": "^1.3.3",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2",
+    "react-scripts": "1.1.4"
   },
   "scripts": {
     "start": "npm run remove:www && react-scripts start",
@@ -19,19 +20,12 @@
     "eject": "react-scripts eject",
     "remove:www": "rm -rf www"
   },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
+  "cordova": {
+    "plugins": {
+      "cordova-plugin-whitelist": {}
+    },
+    "platforms": [
+      "android"
     ]
   }
 }
