@@ -9,6 +9,9 @@
   "installed_plugins": {
     "cordova-plugin-whitelist": {
       "PACKAGE_NAME": "com.abdoronic.battery_checker"
+    },
+    "cordova-plugin-bluetoothle": {
+      "PACKAGE_NAME": "com.abdoronic.battery_checker"
     }
   },
   "dependent_plugins": {}
