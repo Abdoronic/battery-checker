@@ -62,15 +62,10 @@ class App extends Component {
   };
 
   connect = async address => {
-    alert("1");
     this.log(`Connecting to ${address}`, "status");
-    alert("2");
     this.setState({ connecting: true });
-    alert("3");
     let battery = { batteryLevel: "NA" };
-    alert("4");
     let foundDevices = this.state.foundDevices;
-    alert("5");
     try {
       alert("Enter Connect");
       battery = await BluetoothLE.connect(address);
@@ -95,7 +90,7 @@ class App extends Component {
     this.log(`Disconnecting from ${address}`, "status");
     let foundDevices = this.state.foundDevices;
     try {
-      await BluetoothLE.disconnect();
+      await BluetoothLE.disconnect(address);
       let idx = -1;
       for (let i = 0; i < foundDevices.length; i++)
         if (foundDevices[i].address === address) {
@@ -109,7 +104,8 @@ class App extends Component {
   };
 
   showDevices = () => {
-    return this.state.foundDevices.map((device, index) => {
+    let foundDevices = this.state.foundDevices;
+    return foundDevices.map((device, index) => {
       return (
         <div
           key={index}
@@ -118,20 +114,20 @@ class App extends Component {
             borderBottom: "rgb(192,192,192) solid 1px"
           }}
         >
-          {device.name}
+          {device.name && device.name !== "" ? device.name : device.address}
           <Button
-            id={index.toString()}
+            id={foundDevices[index].address.toString()}
             variant="contained"
             color="primary"
-            onClick={async ev => {
-              await this.connect(this.state.foundDevices[ev.target.id].address);
+            onClick={ev => {
+              this.connect(device.address);
             }}
           >
             Connect
           </Button>
         </div>
       );
-    });
+    }, this);
   };
 
   render() {

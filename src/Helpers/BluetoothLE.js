@@ -5,7 +5,7 @@ var foundDevices = [];
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 function log(msg) {
-  return { msg: msg };
+  alert(msg);
 }
 
 function handleError(error) {
@@ -27,6 +27,7 @@ function handleError(error) {
   } else {
     msg = error;
   }
+  log("Error: " + msg);
   return { error: msg };
 }
 
@@ -101,13 +102,14 @@ function stopScanSuccess() {
 }
 
 async function connect(address) {
-  log("Connecting to device: " + address + "...");
+  log("Connecting to device: " + address + " ...");
   return new Promise(function(resolve, reject) {
     ble.connect(resolve, reject, { address: address });
   }).then(connectionAction, handleError);
 }
 
 async function disconnect(address) {
+  log("Disconnecting from device: " + address + " ...");
   return new Promise(function(resolve, reject) {
     ble.disconnect(resolve, reject, { address: address });
   }).then(connectionAction, handleError);
@@ -190,7 +192,7 @@ const BluetoothLE = {
   },
 
   disconnect: async function(address) {
-    disconnect(address);
+    await disconnect(address);
   }
 };
 
