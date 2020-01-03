@@ -1,6 +1,40 @@
 import React, { Component } from "react";
+import { Button } from "@material-ui/core";
 
 class Logger extends Component {
+
+  state = {
+    logMessages: []
+  }
+
+  log = (content, type) => {
+    let logMessages = this.state.logMessages;
+    logMessages.push({
+      id: logMessages.length,
+      content: content,
+      color: type === "error" ? "red" : "black"
+    });
+    this.setState({ logMessages: logMessages });
+  };
+
+  showLog = () => {
+    return (
+      <div>
+        <Button
+          variant="contained"
+          color="primary"
+          style={{ margin: "5%" }}
+          onClick={ev => {
+            this.setState({ logMessages: [] });
+          }}
+        >
+          Clear Log
+        </Button>
+        <Logger logs={this.state.logMessages} />
+      </div>
+    );
+  };
+
   render() {
     return (
       <div style={{ margin: "10%", textAlign: "center" }}>
