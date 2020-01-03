@@ -7,7 +7,7 @@ import BluetoothLE from "./helpers/BluetoothLE";
 
 class App extends Component {
   state = {
-    start: false
+    start: true
   };
 
   showHomePage = () => {

@@ -150,8 +150,7 @@ async function discoverSuccess(result) {
         hasBatteryService = true;
       }
     });
-    if (hasBatteryService)
-      return await read(result.address, "180F", "2a19");
+    if (hasBatteryService) return await read(result.address, "180F", "2a19");
     return { batteryLevel: "NA" };
   }
 }
