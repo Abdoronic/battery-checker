@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Button from "@material-ui/core/Button";
-import BluetoothLE from "../Helpers/BluetoothLE";
+import BluetoothLE from "../helpers/BluetoothLE";
 
 function log(msg) {
   alert(msg);
