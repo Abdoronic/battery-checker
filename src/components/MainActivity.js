@@ -11,20 +11,25 @@ function log(msg) {
 class MainActivity extends Component {
   state = {
     foundDevices: [
-      { name: "iPhone1", address: "AA:AA:AA:AA:AA:AA" },
-      { name: "iPhone2", address: "AA:AA:AA:AA:AA:AA" },
-      { name: "iPhone3", address: "AA:AA:AA:AA:AA:AA" },
-      { name: "iPhone4", address: "AA:AA:AA:AA:AA:AA" },
-      { name: "iPhone5", address: "AA:AA:AA:AA:AA:AA" },
-      { name: "iPhone6", address: "AA:AA:AA:AA:AA:AA" },
-      { name: "iPhone7", address: "AA:AA:AA:AA:AA:AA" }
+      { name: "iPhone1", address: "AA:AA:AA:AA:AA:A1" },
+      { name: "iPhone2", address: "AA:AA:AA:AA:AA:A2" },
+      { name: "iPhone3", address: "AA:AA:AA:AA:AA:A3" },
+      { name: "iPhone4", address: "AA:AA:AA:AA:AA:A4" },
+      { name: "iPhone5", address: "AA:AA:AA:AA:AA:A5" },
+      { name: "iPhone6", address: "AA:AA:AA:AA:AA:A6" },
+      { name: "iPhone7", address: "AA:AA:AA:AA:AA:A7" }
     ],
-    scanning: false
+    scanning: false,
+    connecting: false
   };
 
   async componentDidMount() {
     await BluetoothLE.initialize();
   }
+
+  setConnecting = state => {
+    this.setState({ connecting: state });
+  };
 
   scan = async () => {
     log(`Scanning`, "status");
@@ -53,12 +58,23 @@ class MainActivity extends Component {
                 ? `${Animations.pulse} 2s infinite`
                 : ""
             }}
-            onClick={this.scan}
+            disabled={this.state.scanning || this.state.connecting}
+            onClick={_ => {
+              this.setState({ scanning: true });
+              setTimeout(() => {
+                this.setState({ scanning: false });
+              }, 2000);
+            }}
+            // onClick={this.scan}
           >
             scan
           </Button>
         </div>
-        <AvailableDevices foundDevices={this.state.foundDevices} />
+        <AvailableDevices
+          foundDevices={this.state.foundDevices}
+          scanning={this.state.scanning}
+          onConnecting={this.setConnecting}
+        />
       </div>
     );
   }
@@ -101,7 +117,8 @@ const styles = {
     animation: `${Animations.pulse} 2s infinite`,
     boxShadow: "rgba(0, 0, 0, 0.16) 0px 3px 20px",
     //backgroundColor: "rgba(52, 152, 219, 1.0)",
-    background: "linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(52,152,219,1) 0%, rgba(0,212,255,1) 100%)",
+    background:
+      "linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(52,152,219,1) 0%, rgba(0,212,255,1) 100%)",
     borderRadius: "50%",
     height: "100px",
     width: "100px",
