@@ -111,12 +111,12 @@ class AvailableDevices extends Component {
 const styles = {
   deviceBanner: {
     height: "80px",
-    marginBottom: "7%",
+    marginBottom: "6%",
     borderRadius: "12px",
     boxShadow: "rgba(0, 0, 0, 0.16) 0px 3px 20px"
   },
   readBatteryButton: {
-    backgroundColor: "rgba(52, 152, 219, 1)",
+    background: "linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(52,152,219,1) 0%, rgba(0,212,255,1) 100%)",
     color: "white",
     borderRadius: "20px"
   },

@@ -72,7 +72,7 @@ const Animations = {
     }
     70% {
       transform: scale(1);
-      box-shadow: 0 0 0 70px rgba(52, 152, 219, 0);
+      box-shadow: 0 0 0 40px rgba(52, 152, 219, 0);
     }
     100% {
       transform: scale(0.9);
@@ -83,15 +83,15 @@ const Animations = {
 
 const styles = {
   view: {
-    marginLeft: "6%",
-    marginRight: "6%",
+    marginLeft: "4%",
+    marginRight: "4%",
     marginTop: "10%",
     marginBottom: "10%",
     textAlign: "center"
   },
   scanner: {
     margin: 0,
-    height: "180px",
+    height: "220px",
     display: "flex",
     alignItems: "center",
     marginBottom: "10%",
@@ -99,10 +99,12 @@ const styles = {
   },
   circle: {
     animation: `${Animations.pulse} 2s infinite`,
-    backgroundColor: "rgba(52, 152, 219, 1.0)",
+    boxShadow: "rgba(0, 0, 0, 0.16) 0px 3px 20px",
+    //backgroundColor: "rgba(52, 152, 219, 1.0)",
+    background: "linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(52,152,219,1) 0%, rgba(0,212,255,1) 100%)",
     borderRadius: "50%",
-    height: "90px",
-    width: "90px",
+    height: "100px",
+    width: "100px",
     margin: 0,
     display: "flex",
     alignItems: "center",
