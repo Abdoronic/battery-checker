@@ -5,20 +5,12 @@ import AvailableDevices from "./AvailableDevices";
 import { keyframes } from "styled-components";
 
 function log(msg) {
-  alert(msg);
+  // alert(msg);
 }
 
 class MainActivity extends Component {
   state = {
-    foundDevices: [
-      { name: "iPhone1", address: "AA:AA:AA:AA:AA:A1" },
-      { name: "iPhone2", address: "AA:AA:AA:AA:AA:A2" },
-      { name: "iPhone3", address: "AA:AA:AA:AA:AA:A3" },
-      { name: "iPhone4", address: "AA:AA:AA:AA:AA:A4" },
-      { name: "iPhone5", address: "AA:AA:AA:AA:AA:A5" },
-      { name: "iPhone6", address: "AA:AA:AA:AA:AA:A6" },
-      { name: "iPhone7", address: "AA:AA:AA:AA:AA:A7" }
-    ],
+    foundDevices: [],
     scanning: false,
     connecting: false
   };
@@ -40,10 +32,9 @@ class MainActivity extends Component {
       log(`Found ${foundDevices.length} devices.`, "status");
     } catch (error) {
       log(error.error, "error");
+      alert("Cannot scan! Make sure Bluetooth and GPS are turned on.");
     }
-    this.setState({ foundDevices: foundDevices });
-    this.setState({ scanning: false });
-    log(JSON.stringify({ devices: foundDevices }), "status");
+    this.setState({ foundDevices: foundDevices, scanning: false });
     log(`Done Scanning`, "status");
   };
 
@@ -59,13 +50,7 @@ class MainActivity extends Component {
                 : ""
             }}
             disabled={this.state.scanning || this.state.connecting}
-            onClick={_ => {
-              this.setState({ scanning: true });
-              setTimeout(() => {
-                this.setState({ scanning: false });
-              }, 2000);
-            }}
-            // onClick={this.scan}
+            onClick={this.scan}
           >
             scan
           </Button>

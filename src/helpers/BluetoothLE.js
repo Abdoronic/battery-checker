@@ -5,7 +5,7 @@ var foundDevices = [];
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 function log(msg) {
-  alert(msg);
+  // alert(msg);
 }
 
 function handleError(error) {
@@ -32,9 +32,16 @@ function handleError(error) {
 }
 
 async function initialize() {
+  ble.hasPermission(hasPermissionSuccess);
   return new Promise(function(resolve) {
     ble.initialize(resolve, { request: true, statusReceiver: false });
   }).then(initializeSuccess, handleError);
+}
+
+async function hasPermissionSuccess(result) {
+  if (!result.hasPermission)
+    await ble.requestPermission(requestPermissionSuccess, handleError);
+  log("Has GPS Permission");
 }
 
 function initializeSuccess(result) {
@@ -45,13 +52,6 @@ function initializeSuccess(result) {
     log("Bluetooth is not enabled:");
     log(JSON.stringify(result));
   }
-  ble.hasPermission(hasPermissionSuccess);
-}
-
-function hasPermissionSuccess(result) {
-  if (!result.hasPermission)
-    ble.requestPermission(requestPermissionSuccess, handleError);
-  log("Has GPS Permission");
 }
 
 function requestPermissionSuccess(result) {
@@ -115,9 +115,9 @@ async function disconnect(address) {
   }).then(connectionAction, handleError);
 }
 
-async function closeConnection(result) {
+async function closeConnection(address) {
   return new Promise(function(resolve, reject) {
-    ble.close(resolve, reject, { address: result.address });
+    ble.close(resolve, reject, { address: address });
   }).then(connectionAction, handleError);
 }
 
@@ -128,7 +128,6 @@ async function connectionAction(result) {
     return await getDeviceServices(result.address);
   } else if (result.status === "disconnected") {
     log("Disconnected from device: " + result.address);
-    await closeConnection(result);
   } else if (result.status === "closed") {
     log("Closed device: " + result.address);
   }
@@ -151,7 +150,7 @@ async function discoverSuccess(result) {
       }
     });
     if (hasBatteryService) return await read(result.address, "180F", "2a19");
-    return { batteryLevel: "NA" };
+    return { batteryLevel: null };
   }
 }
 
@@ -192,6 +191,10 @@ const BluetoothLE = {
 
   disconnect: async function(address) {
     await disconnect(address);
+  },
+
+  closeConnection: async function(address) {
+    await closeConnection(address);
   }
 };
 

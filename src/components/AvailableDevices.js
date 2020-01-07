@@ -14,7 +14,7 @@ import ErrorIcon from "@material-ui/icons/Error";
 import CloseIcon from "@material-ui/icons/Close";
 
 function log(msg) {
-  alert(msg);
+  // alert(msg);
 }
 
 class AvailableDevices extends Component {
@@ -26,18 +26,13 @@ class AvailableDevices extends Component {
     batteryLevel: null,
     alert: false,
     alertMessage: "",
-    alertVariant: "success"
+    alertVariant: ""
   };
 
   async componentDidMount() {}
 
   connect = async address => {
     log(`Connecting to ${address}`, "status");
-    this.setState({ connecting: true });
-    this.props.onConnecting(true);
-    this.setState({ connectedAddress: address });
-    this.setState({ connected: false });
-    this.setState({ success: false });
     let battery = { batteryLevel: "Not Available" };
     let foundDevices = this.props.foundDevices;
     try {
@@ -53,36 +48,66 @@ class AvailableDevices extends Component {
       this.setState({ batteryLevel: battery.batteryLevel });
     } catch (error) {
       log(error.error, "error");
+      this.setState({ batteryLevel: null });
     }
-    if (!battery.batteryLevel) battery = { batteryLevel: "Not Available" };
-    return battery;
   };
 
   disconnect = async address => {
     log(`Disconnecting from ${address}`, "status");
-    let foundDevices = this.props.foundDevices;
-    let idx = -1;
     try {
       await BluetoothLE.disconnect(address);
-      for (let i = 0; i < foundDevices.length; i++)
-        if (foundDevices[i].address === address) {
-          idx = i;
-          break;
-        }
-      log(`Disconnected from ${foundDevices[idx].name}.`, "status");
+      log(`Disconnected from ${address}.`, "status");
     } catch (error) {
       log(error.error, "error");
     }
-    this.setState({ connecting: false });
-    this.props.onConnecting(false);
-    this.setState({ connected: true });
-    if (this.state.batteryLevel) this.setState({ success: true });
+  };
+
+  closeConnection = async address => {
+    log(`Closing connection with ${address}`, "status");
+    try {
+      await BluetoothLE.closeConnection(address);
+      log(`Closed connection with ${address}.`, "status");
+    } catch (error) {
+      log(error.error, "error");
+    }
   };
 
   readBattery = async address => {
-    let { batteryLevel } = await this.connect(address);
+    let again = address === this.state.connectedAddress;
+    this.props.onConnecting(true);
+    this.setState({
+      connecting: true,
+      connectedAddress: address,
+      connected: false,
+      success: false
+    });
+
+    await this.connect(address);
     await this.disconnect(address);
-    log("Battery is: " + batteryLevel + "%");
+    await this.closeConnection(address);
+
+    if (!this.state.batteryLevel && !again) {
+      await this.readBattery(address);
+      return;
+    }
+
+    this.setState({ connecting: false, connected: true });
+    this.props.onConnecting(false);
+
+    if (this.state.batteryLevel) {
+      this.setState({ success: true });
+      this.setState({
+        alert: true,
+        alertVariant: "success",
+        alertMessage: "Battery read successfully!"
+      });
+    } else {
+      this.setState({
+        alert: true,
+        alertVariant: "error",
+        alertMessage: "Unable to read battery!"
+      });
+    }
   };
 
   showDevice = (device, index) => {
@@ -119,20 +144,8 @@ class AvailableDevices extends Component {
                       : styles.readBatteryButton
                   }
                   disabled={this.state.connecting || this.props.scanning}
-                  // onClick={_ => {
-                  //   this.readBattery(device.address);
-                  // }}
                   onClick={_ => {
-                    this.setState({ connecting: true });
-                    this.props.onConnecting(true);
-                    this.setState({ connectedAddress: device.address });
-                    this.setState({ success: false, connected: false });
-                    setTimeout(() => {
-                      this.setState({ connecting: false });
-                      this.props.onConnecting(false);
-                      this.setState({ connected: true });
-                      this.setState({ success: true });
-                    }, 2000);
+                    this.readBattery(device.address);
                   }}
                 >
                   Read Battery
@@ -202,7 +215,11 @@ class AvailableDevices extends Component {
     return (
       <div>
         {this.showDevices()}
-        {this.showSnackBar("The message is not that long", "success", this.state.success)}
+        {this.showSnackBar(
+          this.state.alertMessage,
+          this.state.alertVariant,
+          this.state.alert
+        )}
       </div>
     );
   }
@@ -248,7 +265,7 @@ const styles = {
   alertBoxBody: {
     display: "flex",
     alignItems: "center",
-    whiteSpace: "nowrap",
+    whiteSpace: "nowrap"
   }
 };
 
